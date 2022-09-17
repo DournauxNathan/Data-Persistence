@@ -11,21 +11,26 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text bestScoreText;
+
+    public GameObject newHighScore;
+    public InputField playerNameField;
+
     public GameObject GameOverText;
-    
+
     private bool m_Started = false;
     private int m_Points;
-    
+
     private bool m_GameOver = false;
 
-    
+
     // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
+
+        int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
         for (int i = 0; i < LineCount; ++i)
         {
             for (int x = 0; x < perLine; ++x)
@@ -35,6 +40,12 @@ public class MainManager : MonoBehaviour
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
+        }
+
+        if (PersistenceData.instance.playerName != string.Empty)
+        {
+            bestScoreText.gameObject.SetActive(true);
+            bestScoreText.text = "Best Score : " + PersistenceData.instance.playerName + " : " + PersistenceData.instance.highScore;
         }
     }
 
@@ -72,5 +83,27 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+
+        UpdateScore();
+    }
+
+    void UpdateScore()
+    {
+        if (m_Points > PersistenceData.instance.highScore)
+        {
+            newHighScore.SetActive(true);
+
+            PersistenceData.instance.highScore = m_Points;
+        }
+    }
+
+    public void EditName()
+    {
+        PersistenceData.instance.playerName = playerNameField.text;
+        
+        bestScoreText.gameObject.SetActive(true);
+        bestScoreText.text = "Best Score : " + PersistenceData.instance.playerName + " : " + PersistenceData.instance.highScore;
+
+        PersistenceData.instance.Save();
     }
 }
