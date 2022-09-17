@@ -31,7 +31,9 @@ public class MenuUiHandler : MonoBehaviour
         PersistenceData.instance.playerName = "";
         PersistenceData.instance.highScore = 0;
 
-        lastPlayer.text = "Best Score : " + PersistenceData.instance.playerName + " : " + PersistenceData.instance.highScore;
+        lastPlayer.text = string.Empty;
+
+        PersistenceData.instance.Save();
     }
 
     public void Exit()
